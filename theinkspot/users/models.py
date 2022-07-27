@@ -70,3 +70,20 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+
+
+
+class List():
+    username = models.ForeignKey(User, on_delete = models.CASCADE)
+    title = models.CharField(_("Title"), null= False, max_length = 100)
+    description = models.CharField(_("Description"), null= True, max_length= 500)
+    # posts
+    public = models.BooleanField(_("Status"), default= True)
+    #edit to auto_now
+    created = models.DateTimeField(_("Created at"), default= now)
+    edited = models.DateTimeField(_("Last Edit"), default= now)
+
+    
+    def __str__(self):
+        return self.title
+
