@@ -4,8 +4,9 @@ from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin, UpdateModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-
-from .serializers import UserSerializer
+from .serializers import UserSerializer, ListSerializer
+from theinkspot.users.models import List
+from rest_framework import generics
 
 User = get_user_model()
 
@@ -25,18 +26,23 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericV
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
 
-class ListView(GenericViewSet):
- #   serializer_class = ListView
+
+class ListCreationView(GenericViewSet):
+    #serializer_class = ListView
 
     def post(self, request):
-
         user = request.data
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         user_data = serializer.data
+     
+user_list_view = ListCreationView.as_view({'get': 'post'})
 
-    
+class ListDetailsView(GenericViewSet):
+        queryset = List.objects.all()
+        serializer_class = ListSerializer
+        
 
-
+user_list_details_view = ListDetailsView.as_view({'get': 'serializer_class'})
 

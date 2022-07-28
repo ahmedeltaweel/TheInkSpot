@@ -20,11 +20,10 @@ class UserSerializer(serializers.ModelSerializer):
 class ListSerializer(serializers.ModelSerializer):
     title = serializers.CharField( max_length= 100)
     description = serializers.CharField( max_length= 500)
-    # posts
     public = serializers.BooleanField(default= True)
-
-    model = List
+    #owner = serializers.ReadOnlyField(source='owner.username')
     class Meta:
+        model = List
         fields = ('title', 'description', 'public')
        
 
@@ -40,7 +39,8 @@ class ListSerializer(serializers.ModelSerializer):
             usename = validated_data["username"], 
             title = validated_data["title"], 
             description = validated_data["description"],
-            created = validated_data["created"],     
+            created = validated_data["created"],   
+            public= validated_data["public"],  
          )
         return list
 
