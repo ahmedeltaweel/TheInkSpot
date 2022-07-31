@@ -74,8 +74,8 @@ class User(AbstractBaseUser, PermissionsMixin):
  
 class List(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    title = models.CharField(_("Title"), null= False, max_length=100)
-    description = models.CharField(_("Description"), null= True, max_length=500)
+    title = models.CharField(_("Title"), null=False, max_length=100)
+    description = models.CharField(_("Description"), null=True, max_length=500)
     public = models.BooleanField(_("Public"), default=True)
     created = models.DateTimeField(_("Created at"), auto_now_add=True)
     edited = models.DateTimeField(_("Last Edit"), auto_now_add=True)
