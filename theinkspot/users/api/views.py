@@ -7,10 +7,12 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from .serializers import UserSerializer, ListSerializer
 from theinkspot.users.models import List
-from rest_framework import generics
-from django.shortcuts import get_object_or_404
-from rest_framework.views import APIView
-from rest_framework.decorators import api_view
+from rest_framework.views import APIView 
+from rest_framework import status
+from django.http import Http404
+from theinkspot.users.models import List
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 User = get_user_model()
 
@@ -31,70 +33,39 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericV
 
 
 
-class ListCreationView(APIView):
-    #serializer_class = ListView
 
+class ListCreationView(APIView):
+
+    permission_classes = [AllowAny] 
+    queryset = List.objects.all()
+    serializer_class = ListSerializer   
+ 
     def post(self, request):
+        user = request.user
         list = request.data
-        serializer = self.serializer_class(data=list)
-        if(serializer.is_valid()):
+        username= User.objects.filter(username=user.username).first()
+        serializer = self.serializer_class(username, data=list)
+        if serializer.is_valid():
             serializer.save()
             return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({"status": "error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-     
-user_list_view = ListCreationView.as_view()
+ 
 
+ 
 class ListDetailsView(APIView):
-    def retrieve(self, request, pk): # adding primary key
-       # queryset = List.objects.all()
-       # list = get_object_or_404(queryset, pk=pk)
-        try:
-            list = List.objects.get(pk=pk)
-        except List.DoesNotExist:
-             raise Http404("Not exist.")
-
-        serializer = ListSerializer(list)
-        return Response(serializer.data)
-        
-user_list_details_view = ListDetailsView.as_view()
-
-
-
-# @api_view(['GET', 'POST'])
-# def list_create(request):
-
-#     if request.method == 'GET':
-#         lists = List.objects.all()
-#         serializer = ListSerializer(lists, many=True)
-#         return Response(serializer.data)
-
-#     elif request.method == 'POST':
-#         serializer = ListSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-# @api_view(['GET', 'PUT', 'DELETE'])
-# def list_details(request, pk):
-#     try:
-#         list = List.objects.get(pk=pk)
-#     except List.DoesNotExist:
-#          return Response(status=status.HTTP_404_NOT_FOUND)
-#     if request.method == 'GET':
-#          serializer = ListSerializer(list)
-#          return Response(serializer.data)
-#     elif request.method == 'PUT':
-#         serializer = ListSerializer(list, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#     elif request.method == 'DELETE':
-#         list.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
-
-     
+    def retrieve(self, request, pk): 
+        permission_classes = [AllowAny] 
+        user = request.user
+        if(user.is_authenticated):
+            try:
+                list = List.objects.get(pk=pk)
+            except List.DoesNotExist:
+                raise Http404("Not exist.") 
+            serializer = ListSerializer(list)
+            serializer.save()   
+            return Response(serializer.data)
+        else:
+            raise AuthenticationFailed("Please, Login First")
+ 
+ 

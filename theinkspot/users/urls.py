@@ -7,10 +7,10 @@ from theinkspot.users.views import (
 )
 
 from theinkspot.users.api.views import(
-    user_list_view,
-    user_list_details_view,
- )
-
+    ListCreationView,
+    ListDetailsView
+ 
+)
 
 app_name = "users"
 urlpatterns = [
@@ -18,6 +18,6 @@ urlpatterns = [
     path("~update/", view=user_update_view, name="update"),
     path("<str:username>/", view=user_detail_view, name="detail"),
     #List URLs 
-    path('lists/', view=user_list_view, name="user_list_view" ),
-    path('lists/<int:pk>/', view=user_list_details_view, name="list_details"),
+    path("create/lists/", ListCreationView.as_view(), name="user_list_view" ),
+    path("details/lists/<int:pk>/", ListDetailsView.as_view(), name="list_details"),
 ]

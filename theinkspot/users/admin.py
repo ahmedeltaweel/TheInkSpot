@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
 from theinkspot.users.forms import UserAdminChangeForm, UserAdminCreationForm
+from theinkspot.users.models import List
 
 User = get_user_model()
 
@@ -42,3 +43,10 @@ class UserAdmin(auth_admin.UserAdmin):
     )
     list_display = ["username", "name", "is_superuser"]
     search_fields = ["name"]
+
+
+@admin.register(List)
+class ListAdmin(admin.ModelAdmin):
+    list_display = ["user","title", "description","public"]
+ 
+ 
