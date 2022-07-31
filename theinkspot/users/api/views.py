@@ -5,14 +5,15 @@ from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin, UpdateModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
-from .serializers import UserSerializer, ListSerializer
 from theinkspot.users.models import List
 from rest_framework.views import APIView 
 from rest_framework import status
 from django.http import Http404
 from theinkspot.users.models import List
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
+from .serializers import UserSerializer, ListSerializer
+
 
 User = get_user_model()
 
@@ -37,19 +38,24 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericV
 class ListCreationView(APIView):
 
     permission_classes = [AllowAny] 
-    queryset = List.objects.all()
     serializer_class = ListSerializer   
  
     def post(self, request):
         user = request.user
         list = request.data
-        username= User.objects.filter(username=user.username).first()
+        username = User.objects.filter(username=user.username).first()
         serializer = self.serializer_class(username, data=list)
         if serializer.is_valid():
             serializer.save()
-            return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+            return Response(
+                {"status": "success", "data": serializer.data},
+                 status=status.HTTP_200_OK
+                 )
         else:
-            return Response({"status": "error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"status": "error", "data": serializer.errors}, 
+                status=status.HTTP_400_BAD_REQUEST
+                )
  
 
  

@@ -6,11 +6,7 @@ from theinkspot.users.views import (
     user_update_view,
 )
 
-from theinkspot.users.api.views import(
-    ListCreationView,
-    ListDetailsView
- 
-)
+from theinkspot.users.api.views import ListCreationView, ListDetailsView
 
 app_name = "users"
 urlpatterns = [

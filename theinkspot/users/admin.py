@@ -47,6 +47,4 @@ class UserAdmin(auth_admin.UserAdmin):
 
 @admin.register(List)
 class ListAdmin(admin.ModelAdmin):
-    list_display = ["user","title", "description","public"]
- 
- 
+    list_display = ["user", "title", "description", "public"]
