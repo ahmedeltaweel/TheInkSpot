@@ -1,5 +1,6 @@
 import pytest
 
+from theinkspot.category.models import Category
 from theinkspot.users.models import User
 
 """
@@ -63,3 +64,8 @@ def superuser(db) -> User:
         email="test@email.com",
         password="Am0123456789123456",
     )
+
+
+@pytest.fixture()
+def category(db) -> Category:
+    return Category.objects.create(name="sports")

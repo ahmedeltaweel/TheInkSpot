@@ -7,6 +7,9 @@ from django.db import models
 from django.urls import reverse
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
+from django_extensions.db.models import TimeStampedModel
+
+from theinkspot.category.models import Category
 
 
 class UserManager(BaseUserManager):
@@ -70,3 +73,19 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+
+
+class UserCategoryFollow(TimeStampedModel, models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="followers")
+    category = models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name="followed_categories"
+    )
+    get_email = models.BooleanField(
+        _("get notified about this category"), default=False
+    )
+
+    class Meta:
+        unique_together = ("user", "category")
+
+    def __str__(self):
+        return f"{self.user} follows {self.category}"

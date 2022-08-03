@@ -1,17 +1,10 @@
 from django.contrib import admin
 
-from theinkspot.category.models import Category, UserCategoryFollow
+from theinkspot.category.models import Category
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ["name"]
+    list_display = ["name", "created", "modified"]
 
 
 admin.site.register(Category, CategoryAdmin)
-
-
-class UserCategoryFollowAdmin(admin.ModelAdmin):
-    list_display = ["user", "category", "get_email", "created_at"]
-
-
-admin.site.register(UserCategoryFollow, UserCategoryFollowAdmin)
