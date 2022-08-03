@@ -18,6 +18,7 @@ urlpatterns = [
     path("users/", include("theinkspot.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
+    path("lists/", include("theinkspot.lists.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS

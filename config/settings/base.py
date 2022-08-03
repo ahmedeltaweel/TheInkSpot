@@ -64,6 +64,7 @@ DJANGO_APPS = [
     # "django.contrib.humanize", # Handy template tags
     "django.contrib.admin",
     "django.forms",
+    
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
@@ -76,10 +77,14 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "drf_spectacular",
+    
 ]
 
 LOCAL_APPS = [
     "theinkspot.users",
+    "theinkspot.lists",
+  
+
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
