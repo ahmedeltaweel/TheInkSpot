@@ -279,3 +279,4 @@ theinkspot/media/
 .envs/*
 !.envs/.local/
 env/
+venv/
