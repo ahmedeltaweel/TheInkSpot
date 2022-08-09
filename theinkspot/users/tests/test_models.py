@@ -76,23 +76,11 @@ class TestUserModel:
 
 @pytest.mark.django_db
 class TestUserCategoryFollow:
-    def test_UserCategoryFollow_unique_together(self):
-        unique_together = UserCategoryFollow._meta.unique_together
-        assert unique_together[0] == ("user", "category")
-
     def test_user_follow_category(self, user, category):
         follow = UserCategoryFollow.objects.create(user=user, category=category)
         assert user.followers.count() == 1
         assert category.followed_categories.count() == 1
         assert follow.get_email is False
-
-    def test_get_email_label(self):
-        label = UserCategoryFollow._meta.get_field("get_email").verbose_name
-        assert label == "get notified about this category"
-
-    def test_get_email_default_value(self):
-        default = UserCategoryFollow._meta.get_field("get_email").default
-        assert default is False
 
     def test_user_unfollow_category(self, user, category):
         UserCategoryFollow.objects.create(user=user, category=category)
@@ -113,6 +101,8 @@ class TestUserCategoryFollow:
         with pytest.raises(AttributeError):
             user.followers.first().delete()
 
-    def test_object_name_is_user_follows_category(self, user, category):
-        follow = UserCategoryFollow.objects.create(user=user, category=category)
-        assert str(follow) == f"{follow.user} follows {follow.category}"
+    def test_custom_model_manager_returns_queryset(self, user, category):
+        UserCategoryFollow.objects.create(user=user, category=category)
+        object = UserCategoryFollow.objects.first()
+        assert object.user == user
+        assert object.category == category

@@ -67,7 +67,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 
-class UserCategoryFollow(TimeStampedModel, models.Model):
+class FollowCategoryManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().select_related("user", "category")
+
+
+class UserCategoryFollow(TimeStampedModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="followers")
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="followed_categories"
@@ -78,6 +83,8 @@ class UserCategoryFollow(TimeStampedModel, models.Model):
 
     class Meta:
         unique_together = ("user", "category")
+
+    objects = FollowCategoryManager()
 
     def __str__(self):
         return f"{self.user} follows {self.category}"
