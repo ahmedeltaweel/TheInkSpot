@@ -15,10 +15,10 @@ class TestCategoryViewSet:
         assert request.data[1]["name"] == "computer science"
 
     def test_retrive_category(self, auth_client, user, sports_category, cs_category):
-        id = Category.objects.get(name="sports").id
-        request = auth_client.get(f"/api/category/{id}/")
+        category_obj = Category.objects.get(name="sports")
+        request = auth_client.get(f"/api/category/{category_obj.name}/")
         assert request.status_code == 200
-        assert request.data["id"] == id
+        assert request.data["id"] == category_obj.id
         assert request.data["name"] == "sports"
 
     def test_list_categories_fail_if_not_authenticated(
