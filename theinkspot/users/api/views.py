@@ -1,12 +1,19 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
+from django.db.utils import IntegrityError
 from django.urls import reverse
 from rest_framework import generics, status
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .serializers import UserSerializer
+from theinkspot.category.models import Category
+from theinkspot.users.api.serializers import UserSerializer
+from theinkspot.users.models import UserCategoryFollow
 
 User = get_user_model()
 
@@ -61,3 +68,127 @@ class VerifyEmail(generics.GenericAPIView):
             return Response(
                 {"email": "Already Activated"}, status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class CategoryFollow(GenericViewSet):
+    @action(
+        methods=["POST"],
+        detail=False,
+        url_path="follow",
+        url_name="follow",
+        permission_classes=[IsAuthenticated],
+    )
+    def follow(self, request):
+
+        try:
+            category = Category.objects.get(name=request.data.get("category"))
+        except ObjectDoesNotExist:
+            return Response(
+                {"error": "category not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        try:
+            follow = UserCategoryFollow.objects.create(
+                user=request.user, category=category
+            )
+            follow.save()
+            data = {
+                "msg": "followed successfully",
+                "category": str(category),
+                "user": str(request.user),
+                "get_email": str(follow.get_email),
+            }
+            return Response(data, status=status.HTTP_201_CREATED)
+        except IntegrityError:
+            return Response(
+                {"msg": "category already followed"}, status=status.HTTP_409_CONFLICT
+            )
+
+    @action(
+        methods=["DELETE"],
+        detail=False,
+        url_path="unfollow",
+        url_name="unfollow",
+        permission_classes=[IsAuthenticated],
+    )
+    def unfollow(self, request):
+
+        try:
+            category = Category.objects.get(name=request.data.get("category"))
+        except ObjectDoesNotExist:
+            return Response(
+                {"error": "category not found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        try:
+            follow = UserCategoryFollow.objects.get(
+                user=request.user, category=category
+            )
+            follow.delete()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except ObjectDoesNotExist:
+            return Response(
+                {"msg": "You are not following this category"},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+    @action(
+        methods=["PUT"],
+        detail=False,
+        url_path="subscribe",
+        url_name="get-email",
+        permission_classes=[IsAuthenticated],
+    )
+    def subscribe_category_newsletter(self, request):
+
+        try:
+            object = UserCategoryFollow.objects.get(
+                user=request.user,
+                category=Category.objects.get(name=request.data.get("category")),
+            )
+        except ObjectDoesNotExist:
+            return Response(
+                {"error": "You don't follow this category"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if object.get_email:
+            return Response(
+                {"error": "You alerady subscribing for newsletter for this category"},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        object.get_email = True
+        object.save()
+        return Response({"msg": "Subscribed successfully"}, status=status.HTTP_200_OK)
+
+    @action(
+        methods=["PUT"],
+        detail=False,
+        url_path="unsubscribe",
+        url_name="stop-emails",
+        permission_classes=[IsAuthenticated],
+    )
+    def unsubscribe_category_newsletter(self, request):
+
+        try:
+            object = UserCategoryFollow.objects.get(
+                user=request.user,
+                category=Category.objects.get(name=request.data.get("category")),
+            )
+        except ObjectDoesNotExist:
+            return Response(
+                {"error": "You don't follow this category"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if not object.get_email:
+            return Response(
+                {"error": "You are not subscribing for newsletter for this category"},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        object.get_email = False
+        object.save()
+        return Response({"msg": "Unsubscribed successfully"}, status=status.HTTP_200_OK)
