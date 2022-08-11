@@ -77,8 +77,3 @@ def auth_client(user):
     client = APIClient()
     client.force_authenticate(user)
     return client
-
-
-@pytest.fixture()
-def sports_category(db) -> Category:
-    return Category.objects.create(name="sports")
