@@ -8,7 +8,7 @@ from django_extensions.db.models import TimeStampedModel
 from theinkspot.users.models import User
 
 
-class List(TimeStampedModel, models.Model):
+class List(TimeStampedModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(_("Title"), max_length=100)
     description = models.CharField(_("Description"), null=True, max_length=500)

@@ -1,18 +1,21 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import status, viewsets
-from rest_framework.generics import CreateAPIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
+from rest_framework import viewsets
+from rest_framework.permissions import (
+    SAFE_METHODS,
+    BasePermission,
+)
 
 from theinkspot.lists.models import List
-from theinkspot.users.models import User
-
 from .serializers import ListSerializer
 
 
-class ListView(viewsets.ModelViewSet):
-    # TODO: check how to maintain ownership of list user
-    # permission
+class ListPermission(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.method in SAFE_METHODS:
+            return True
+        return obj.user == request.user
+
+class ListView(viewsets.ModelViewSet, ListPermission):
     serializer_class = ListSerializer
     queryset = List.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [ListPermission]
+    
