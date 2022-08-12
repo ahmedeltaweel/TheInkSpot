@@ -1,10 +1,8 @@
 from rest_framework import viewsets
-from rest_framework.permissions import (
-    SAFE_METHODS,
-    BasePermission,
-)
+from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 from theinkspot.lists.models import List
+
 from .serializers import ListSerializer
 
 
@@ -14,8 +12,8 @@ class ListPermission(BasePermission):
             return True
         return obj.user == request.user
 
+
 class ListView(viewsets.ModelViewSet, ListPermission):
     serializer_class = ListSerializer
     queryset = List.objects.all()
     permission_classes = [ListPermission]
-    
