@@ -17,6 +17,10 @@ urlpatterns = router.urls
 urlpatterns += [
     path("users/register/", RegisterUsers.as_view(), name="register"),
     path("users/token/", jwt_views.TokenObtainPairView.as_view(), name="access token"),
-    path("users/refresh/token/", jwt_views.TokenRefreshView.as_view(), name="refresh token"),
+    path(
+        "users/refresh/token/",
+        jwt_views.TokenRefreshView.as_view(),
+        name="refresh token",
+    ),
     path("users/verify-email/", VerifyEmail.as_view(), name="verify-email"),
 ]
