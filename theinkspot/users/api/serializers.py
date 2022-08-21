@@ -80,7 +80,7 @@ class FollowersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserFollow
-        fields = ("id", "follower_user", "created_at")
+        fields = ("id", "follower_user", "created")
 
 
 class FollowingsSerializer(serializers.ModelSerializer):
@@ -88,4 +88,4 @@ class FollowingsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserFollow
-        fields = ("id", "followed_user", "created_at")
+        fields = ("id", "followed_user", "created")

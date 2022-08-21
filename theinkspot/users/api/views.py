@@ -7,6 +7,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
 
 from .serializers import UserSerializer, FollowingsSerializer, FollowersSerializer
 from theinkspot.users.models import UserFollow
@@ -67,22 +68,15 @@ class VerifyEmail(generics.GenericAPIView):
 
 
 class FollowersView(APIView):
-
     def get(self, request, username):
-        try:
-            user = User.objects.get(username=username)
-        except:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        user = get_object_or_404(klass=User, username=username)
         serializer = FollowersSerializer(user.followers.all(), many=True, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
 
 class FollowingsView(APIView):
     def get(self, request, username):
-        try:
-            user = User.objects.get(username=username)
-        except:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        user = get_object_or_404(klass=User, username=username)
         serializer = FollowingsSerializer(user.following.all(), many=True, context={"request": request})
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
@@ -91,17 +85,18 @@ class FollowView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        username = request.data.get("username")
-        user = User.objects.get(username=username)
-
-        user_follow = UserFollow.objects.create(follower_user=request.user, followed_user=user)
-
         try:
+            username = request.data.get("username")
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        user = get_object_or_404(klass=User, username=username)
+        try:
+            user_follow = UserFollow.objects.create(follower_user=request.user, followed_user=user)
             user_follow.save()
         except ValueError:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={"detail": "Can't follow yourself you narcissist!"})
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"detail": "Can't Follow Yourself"})
         except IntegrityError:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={"detail": "Already following him you stalker!"})
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"detail": "Already Following User"})
         return Response(status=status.HTTP_200_OK)
 
 
@@ -111,8 +106,11 @@ class UnFollowView(APIView):
     def post(self, request):
         try:
             username = request.data.get("username")
-            user = User.objects.get(username=username)
-            UserFollow.objects.filter(follower_user=request.user, followed_user=user).delete()
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        user = get_object_or_404(klass=User, username=username)
+        try:
+            UserFollow.objects.get(follower_user=request.user, followed_user=user).delete()
         except:
             return Response(status=status.HTTP_404_NOT_FOUND, data={"detail": "Not found"})
         return Response(status=status.HTTP_200_OK)

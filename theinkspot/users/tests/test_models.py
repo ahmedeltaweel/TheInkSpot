@@ -106,15 +106,3 @@ class TestUserFollow:
 
         with pytest.raises(AttributeError):
             user.followers.first().delete()
-
-    def test_follow_unfollow_user(self, user, user2):
-        UserFollow.objects.create(follower_user=user2, followed_user=user)
-        user.followers.first().delete()
-        assert user.following.count() == 0
-        assert user2.followers.count() == 0
-
-        UserFollow.objects.create(follower_user=user2, followed_user=user)
-        assert user.followers.count() == 1
-        assert user2.following.count() == 1
-        assert user.followers.first().follower_user == user2
-        assert user2.following.first().followed_user == user
