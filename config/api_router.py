@@ -10,4 +10,7 @@ else:
 app_name = "api"
 urlpatterns = router.urls
 
-urlpatterns += []
+urlpatterns += [
+
+    path("api/users/", include("theinkspot.users.api.urls")),
+]
