@@ -1,3 +1,4 @@
+from wsgiref import validate
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
@@ -6,6 +7,7 @@ from django.contrib.auth.models import (
 from django.db import models
 from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
+from users.validators import validate_facebook
 
 
 class UserManager(BaseUserManager):
@@ -49,6 +51,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(_("User Full Name"), max_length=155)
     email = models.EmailField(_("Email"), max_length=155, unique=True)
     username = models.CharField(_("Username"), max_length=155, unique=True)
+    fb_url = models.URLField(_("Facebook link"), max_length=100, validators=[validate_facebook])
+    # twitter_url = models.URLField(_("Twitter link"), max_length=100)
+    # gh_url = models.URLField(_("Github Link"), max_length=100)
     is_verified = models.BooleanField(_("Is user verified by email"), default=False)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
