@@ -79,6 +79,7 @@ class UserFollow(TimeStampedModel):
         "User", related_name="followers", on_delete=models.CASCADE
     )
 
+    created_at = 
     objects = UserFollowManager()
 
     class Meta:
