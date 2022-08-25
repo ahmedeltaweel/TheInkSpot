@@ -3,12 +3,14 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter, SimpleRouter
 from rest_framework_simplejwt import views as jwt_views
 
-from theinkspot.users.api.views import RegisterUsers, VerifyEmail
+from theinkspot.users.api.views import RegisterUsers, UserViewSet, VerifyEmail
 
 if settings.DEBUG:
     router = DefaultRouter()
 else:
     router = SimpleRouter()
+
+router.register("users", UserViewSet, "user")
 
 
 app_name = "api-users"
