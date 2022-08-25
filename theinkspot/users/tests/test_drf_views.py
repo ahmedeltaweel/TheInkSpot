@@ -231,7 +231,7 @@ class TestUserCategoryFollowView:
         assert request.data["category"] == object.category.name
         assert object.get_email is False
 
-        request = auth_client.delete("/api/users/category/unfollow/", data)
+        request = auth_client.post("/api/users/category/unfollow/", data)
         assert request.status_code == 204
 
     def test_user_can_not_follow_or_unfollow_category_that_does_not_exist(
@@ -241,11 +241,11 @@ class TestUserCategoryFollowView:
 
         request = auth_client.post("/api/users/category/follow/", data)
         assert request.status_code == 404
-        assert request.data["error"] == "category not found"
+        assert request.data["detail"] == "Not found."
 
-        request = auth_client.delete("/api/users/category/unfollow/", data)
+        request = auth_client.post("/api/users/category/unfollow/", data)
         assert request.status_code == 404
-        assert request.data["error"] == "category not found"
+        assert request.data["detail"] == "Not found."
 
     def test_user_can_not_follow_already_followed_category(
         self, auth_client, user, category
@@ -263,14 +263,14 @@ class TestUserCategoryFollowView:
         request = client.post("/api/users/category/follow/", data)
         assert request.status_code == 401
 
-        request = client.delete("/api/users/category/unfollow/", data)
+        request = client.post("/api/users/category/unfollow/", data)
         assert request.status_code == 401
 
     def test_user_can_not_unfollow_category_that_not_followed(
         self, auth_client, user, category
     ):
         data = {"category": "sports"}
-        request = auth_client.delete("/api/users/category/unfollow/", data)
+        request = auth_client.post("/api/users/category/unfollow/", data)
         assert request.status_code == 409
         assert request.data["msg"] == "You are not following this category"
 
@@ -281,12 +281,12 @@ class TestUserCategoryFollowView:
 
         data = {"category": "sports"}
 
-        request = auth_client.put("/api/users/category/subscribe/", data)
+        request = auth_client.post("/api/users/category/subscribe/", data)
         assert request.status_code == 200
         object = UserCategoryFollow.objects.get(user=user, category=category)
         assert object.get_email is True
 
-        request = auth_client.put("/api/users/category/unsubscribe/", data)
+        request = auth_client.post("/api/users/category/unsubscribe/", data)
         assert request.status_code == 200
         object = UserCategoryFollow.objects.get(user=user, category=category)
         assert object.get_email is False
@@ -298,18 +298,18 @@ class TestUserCategoryFollowView:
     ):
         data = {"category": "sports"}
 
-        request = auth_client.put("/api/users/category/subscribe/", data)
+        request = auth_client.post("/api/users/category/subscribe/", data)
         assert request.status_code == 404
 
-        request = auth_client.put("/api/users/category/unsubscribe/", data)
+        request = auth_client.post("/api/users/category/unsubscribe/", data)
         assert request.status_code == 404
 
     def test_unauthorized_user_can_not_subscribe_or_unsubscribe_category_newsletter(
         self, client, user, category
     ):
         data = {"category": "sports"}
-        request = client.put("/api/users/category/subscribe/", data)
+        request = client.post("/api/users/category/subscribe/", data)
         assert request.status_code == 401
 
-        request = client.put("/api/users/category/unsubscribe/", data)
+        request = client.post("/api/users/category/unsubscribe/", data)
         assert request.status_code == 401

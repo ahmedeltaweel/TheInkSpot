@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
 from django.db.utils import IntegrityError
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from rest_framework import generics, status
 from rest_framework.decorators import action
@@ -80,12 +81,7 @@ class CategoryFollow(GenericViewSet):
     )
     def follow(self, request):
 
-        try:
-            category = Category.objects.get(name=request.data.get("category"))
-        except ObjectDoesNotExist:
-            return Response(
-                {"error": "category not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+        category = get_object_or_404(Category, name=request.data.get("category"))
 
         try:
             follow = UserCategoryFollow.objects.create(
@@ -105,7 +101,7 @@ class CategoryFollow(GenericViewSet):
             )
 
     @action(
-        methods=["DELETE"],
+        methods=["POST"],
         detail=False,
         url_path="unfollow",
         url_name="unfollow",
@@ -113,12 +109,7 @@ class CategoryFollow(GenericViewSet):
     )
     def unfollow(self, request):
 
-        try:
-            category = Category.objects.get(name=request.data.get("category"))
-        except ObjectDoesNotExist:
-            return Response(
-                {"error": "category not found"}, status=status.HTTP_404_NOT_FOUND
-            )
+        category = get_object_or_404(Category, name=request.data.get("category"))
 
         try:
             follow = UserCategoryFollow.objects.get(
@@ -134,7 +125,7 @@ class CategoryFollow(GenericViewSet):
             )
 
     @action(
-        methods=["PUT"],
+        methods=["POST"],
         detail=False,
         url_path="subscribe",
         url_name="get-email",
@@ -142,16 +133,10 @@ class CategoryFollow(GenericViewSet):
     )
     def subscribe_category_newsletter(self, request):
 
-        try:
-            object = UserCategoryFollow.objects.get(
-                user=request.user,
-                category=Category.objects.get(name=request.data.get("category")),
-            )
-        except ObjectDoesNotExist:
-            return Response(
-                {"error": "You don't follow this category"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        category = get_object_or_404(Category, name=request.data.get("category"))
+        object = get_object_or_404(
+            UserCategoryFollow, user=request.user, category=category
+        )
 
         if object.get_email:
             return Response(
@@ -164,7 +149,7 @@ class CategoryFollow(GenericViewSet):
         return Response({"msg": "Subscribed successfully"}, status=status.HTTP_200_OK)
 
     @action(
-        methods=["PUT"],
+        methods=["POST"],
         detail=False,
         url_path="unsubscribe",
         url_name="stop-emails",
@@ -172,16 +157,10 @@ class CategoryFollow(GenericViewSet):
     )
     def unsubscribe_category_newsletter(self, request):
 
-        try:
-            object = UserCategoryFollow.objects.get(
-                user=request.user,
-                category=Category.objects.get(name=request.data.get("category")),
-            )
-        except ObjectDoesNotExist:
-            return Response(
-                {"error": "You don't follow this category"},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        category = get_object_or_404(Category, name=request.data.get("category"))
+        object = get_object_or_404(
+            UserCategoryFollow, user=request.user, category=category
+        )
 
         if not object.get_email:
             return Response(
