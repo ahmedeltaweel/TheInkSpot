@@ -11,6 +11,7 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
     path("accounts/", include("allauth.urls")),
+    path("profiles/", include("theinkspot.profiles.urls")),
     # Your stuff: custom urls includes go here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
@@ -18,6 +19,7 @@ urlpatterns = [
 urlpatterns += [
     # API base url
     path("api/", include("config.api_router")),
+    path("api/category/", include("theinkspot.category.api.urls"), name="drf-category"),
     # DRF auth token
     path("auth-token/", obtain_auth_token),
     path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
