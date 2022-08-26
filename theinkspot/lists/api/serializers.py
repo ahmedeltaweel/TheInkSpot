@@ -1,7 +1,7 @@
 from rest_framework import serializers
+from rest_framework.fields import CurrentUserDefault
 
 from theinkspot.lists.models import List
-from rest_framework.fields import CurrentUserDefault
 
 
 class ListSerializer(serializers.ModelSerializer):
