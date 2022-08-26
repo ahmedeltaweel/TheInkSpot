@@ -80,9 +80,11 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
+    "theinkspot.category",
     "theinkspot.users",
     "theinkspot.lists",
     "theinkspot.posts",
+    "theinkspot.profiles",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
