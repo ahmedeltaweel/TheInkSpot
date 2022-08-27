@@ -8,21 +8,54 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Category',
+            name="Category",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', django_extensions.db.fields.CreationDateTimeField(auto_now_add=True, verbose_name='created')),
-                ('modified', django_extensions.db.fields.ModificationDateTimeField(auto_now=True, verbose_name='modified')),
-                ('name', models.CharField(choices=[('sports', 'Sports'), ('computer science', 'Computer Science'), ('Physics', 'Physics'), ('space', 'Space'), ('cinema', 'Cinema'), ('music', 'Music'), ('economy', 'Economy')], max_length=50, unique=True, verbose_name='Category Name')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created",
+                    django_extensions.db.fields.CreationDateTimeField(
+                        auto_now_add=True, verbose_name="created"
+                    ),
+                ),
+                (
+                    "modified",
+                    django_extensions.db.fields.ModificationDateTimeField(
+                        auto_now=True, verbose_name="modified"
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        choices=[
+                            ("sports", "Sports"),
+                            ("computer science", "Computer Science"),
+                            ("Physics", "Physics"),
+                            ("space", "Space"),
+                            ("cinema", "Cinema"),
+                            ("music", "Music"),
+                            ("economy", "Economy"),
+                        ],
+                        max_length=50,
+                        unique=True,
+                        verbose_name="Category Name",
+                    ),
+                ),
             ],
             options={
-                'get_latest_by': 'modified',
-                'abstract': False,
+                "get_latest_by": "modified",
+                "abstract": False,
             },
         ),
     ]

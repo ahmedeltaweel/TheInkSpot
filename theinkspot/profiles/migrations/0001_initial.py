@@ -16,23 +16,65 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Profile',
+            name="Profile",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('about_text', models.TextField()),
-                ('profile_pic', models.ImageField(blank=True, null=True, upload_to=theinkspot.profiles.utils.get_profile_pic_url)),
-                ('header_pic', models.ImageField(blank=True, null=True, upload_to=theinkspot.profiles.utils.get_header_pic_url)),
-                ('short_bio', models.CharField(default='no bio', max_length=255)),
-                ('profile_views', models.IntegerField(default=0)),
-                ('accent_color', models.CharField(choices=[('#000000', 'Black'), ('#FFFFFF', 'White')], default='#FFFFFF', max_length=7)),
-                ('background_color', models.CharField(choices=[('#000000', 'Black'), ('#FFFFFF', 'White')], default='#FFFFFF', max_length=7)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("about_text", models.TextField()),
+                (
+                    "profile_pic",
+                    models.ImageField(
+                        blank=True,
+                        null=True,
+                        upload_to=theinkspot.profiles.utils.get_profile_pic_url,
+                    ),
+                ),
+                (
+                    "header_pic",
+                    models.ImageField(
+                        blank=True,
+                        null=True,
+                        upload_to=theinkspot.profiles.utils.get_header_pic_url,
+                    ),
+                ),
+                ("short_bio", models.CharField(default="no bio", max_length=255)),
+                ("profile_views", models.IntegerField(default=0)),
+                (
+                    "accent_color",
+                    models.CharField(
+                        choices=[("#000000", "Black"), ("#FFFFFF", "White")],
+                        default="#FFFFFF",
+                        max_length=7,
+                    ),
+                ),
+                (
+                    "background_color",
+                    models.CharField(
+                        choices=[("#000000", "Black"), ("#FFFFFF", "White")],
+                        default="#FFFFFF",
+                        max_length=7,
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Profile',
-                'ordering': ['-created_at'],
+                "verbose_name": "Profile",
+                "ordering": ["-created_at"],
             },
         ),
     ]
