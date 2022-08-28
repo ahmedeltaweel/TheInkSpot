@@ -313,3 +313,6 @@ class TestUserCategoryFollowView:
 
         request = client.post("/api/users/category/unsubscribe/", data)
         assert request.status_code == 401
+
+
+# check ci
