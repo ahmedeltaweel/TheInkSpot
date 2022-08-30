@@ -5,8 +5,6 @@ from theinkspot.users.models import User
 
 client = APIClient()
 
-# test
-
 
 @pytest.mark.django_db
 class TestListCreationView(APITestCase):
