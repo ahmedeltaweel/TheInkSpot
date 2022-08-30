@@ -11,7 +11,6 @@ from theinkspot.users.models import User
 pytestmark = pytest.mark.django_db
 
 
-@pytestmark
 class TestProfileViews(TestCase):
     def makeProfile(self):
         self.user = User.objects.create(

@@ -10,7 +10,6 @@ from theinkspot.users.models import User
 pytestmark = pytest.mark.django_db
 
 
-@pytestmark
 class ProfileModelTestcase(TestCase):
     def setUp(self):
         self.user = User.objects.create(
