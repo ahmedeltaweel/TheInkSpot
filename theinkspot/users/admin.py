@@ -4,7 +4,8 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
 from theinkspot.users.forms import UserAdminChangeForm, UserAdminCreationForm
-from theinkspot.users.models import UserFollow
+from theinkspot.users.models import UserFollow, UserCategoryFollow
+from theinkspot.users.models import 
 
 User = get_user_model()
 
@@ -56,3 +57,8 @@ class UserFollowAdmin(admin.ModelAdmin):
         "followed_user",
         "follower_user",
     ]
+class UserCategoryFollowAdmin(admin.ModelAdmin):
+    list_display = ["user", "category", "get_email", "created", "modified"]
+
+
+admin.site.register(UserCategoryFollow, UserCategoryFollowAdmin)
