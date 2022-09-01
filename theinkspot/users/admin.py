@@ -5,7 +5,6 @@ from django.utils.translation import gettext_lazy as _
 
 from theinkspot.users.forms import UserAdminChangeForm, UserAdminCreationForm
 from theinkspot.users.models import UserFollow, UserCategoryFollow
-from theinkspot.users.models import 
 
 User = get_user_model()
 

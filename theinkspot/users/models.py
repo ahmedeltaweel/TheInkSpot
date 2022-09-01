@@ -101,9 +101,9 @@ class FollowCategoryManager(models.Manager):
 
 
 class UserCategoryFollow(TimeStampedModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="followers")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="category_follows")
     category = models.ForeignKey(
-        Category, on_delete=models.CASCADE, related_name="followed_categories"
+        Category, on_delete=models.CASCADE, related_name="category_followers"
     )
     get_email = models.BooleanField(
         _("get notified about this category"), default=False

@@ -112,15 +112,15 @@ class TestUserFollow:
 class TestUserCategoryFollow:
     def test_user_follow_category(self, user, category):
         follow = UserCategoryFollow.objects.create(user=user, category=category)
-        assert user.followers.count() == 1
-        assert category.followed_categories.count() == 1
+        assert user.category_follows.count() == 1
+        assert category.category_followers.count() == 1
         assert follow.get_email is False
 
     def test_user_unfollow_category(self, user, category):
         UserCategoryFollow.objects.create(user=user, category=category)
-        user.followers.first().delete()
-        assert user.followers.count() == 0
-        assert category.followed_categories.count() == 0
+        user.category_follows.first().delete()
+        assert user.category_follows.count() == 0
+        assert category.category_followers.count() == 0
 
     def test_user_follow_already_followed_category(self, user, category):
         UserCategoryFollow.objects.create(user=user, category=category)
@@ -130,10 +130,10 @@ class TestUserCategoryFollow:
 
     def test_user_unfollow_already_unfollowed_category(self, user, category):
         UserCategoryFollow.objects.create(user=user, category=category)
-        user.followers.first().delete()
+        user.category_follows.first().delete()
 
         with pytest.raises(AttributeError):
-            user.followers.first().delete()
+            user.category_follows.first().delete()
 
     def test_custom_model_manager_returns_queryset(self, user, category):
         UserCategoryFollow.objects.create(user=user, category=category)
