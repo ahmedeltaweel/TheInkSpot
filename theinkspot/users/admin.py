@@ -56,6 +56,8 @@ class UserFollowAdmin(admin.ModelAdmin):
         "followed_user",
         "follower_user",
     ]
+
+
 class UserCategoryFollowAdmin(admin.ModelAdmin):
     list_display = ["user", "category", "get_email", "created", "modified"]
 

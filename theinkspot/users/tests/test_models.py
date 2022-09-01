@@ -109,6 +109,7 @@ class TestUserFollow:
         with pytest.raises(AttributeError):
             user.followers.first().delete()
 
+
 class TestUserCategoryFollow:
     def test_user_follow_category(self, user, category):
         follow = UserCategoryFollow.objects.create(user=user, category=category)

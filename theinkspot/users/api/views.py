@@ -95,14 +95,18 @@ class VerifyEmail(generics.GenericAPIView):
 class FollowersView(APIView):
     def get(self, request, username):
         user = get_object_or_404(klass=User, username=username)
-        serializer = FollowersSerializer(user.followers.all(), many=True, context={"request": request})
+        serializer = FollowersSerializer(
+            user.followers.all(), many=True, context={"request": request}
+        )
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
 
 class FollowingsView(APIView):
     def get(self, request, username):
         user = get_object_or_404(klass=User, username=username)
-        serializer = FollowingsSerializer(user.following.all(), many=True, context={"request": request})
+        serializer = FollowingsSerializer(
+            user.following.all(), many=True, context={"request": request}
+        )
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
 
@@ -116,12 +120,20 @@ class FollowView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         user = get_object_or_404(klass=User, username=username)
         try:
-            user_follow = UserFollow.objects.create(follower_user=request.user, followed_user=user)
+            user_follow = UserFollow.objects.create(
+                follower_user=request.user, followed_user=user
+            )
             user_follow.save()
         except ValueError:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={"detail": "Can't Follow Yourself"})
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"detail": "Can't Follow Yourself"},
+            )
         except IntegrityError:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={"detail": "Already Following User"})
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"detail": "Already Following User"},
+            )
         return Response(status=status.HTTP_200_OK)
 
 
@@ -135,10 +147,15 @@ class UnFollowView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         user = get_object_or_404(klass=User, username=username)
         try:
-            UserFollow.objects.get(follower_user=request.user, followed_user=user).delete()
+            UserFollow.objects.get(
+                follower_user=request.user, followed_user=user
+            ).delete()
         except:
-            return Response(status=status.HTTP_404_NOT_FOUND, data={"detail": "Not found"})
+            return Response(
+                status=status.HTTP_404_NOT_FOUND, data={"detail": "Not found"}
+            )
         return Response(status=status.HTTP_200_OK)
+
 
 class CategoryFollow(GenericViewSet):
     @action(

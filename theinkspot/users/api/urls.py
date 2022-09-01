@@ -24,5 +24,4 @@ urlpatterns = [
     path("followings/<str:username>", FollowingsView.as_view(), name="user-following"),
     path("follow/", FollowView.as_view(), name="user-follow"),
     path("unfollow/", UnFollowView.as_view(), name="user-unfollow"),
-
 ]

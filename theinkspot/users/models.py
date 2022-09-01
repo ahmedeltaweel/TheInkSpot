@@ -95,13 +95,16 @@ class UserFollow(TimeStampedModel):
     def __str__(self):
         return f"{self.follower_user.username} follows {self.followed_user.username}"
 
+
 class FollowCategoryManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().select_related("user", "category")
 
 
 class UserCategoryFollow(TimeStampedModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="category_follows")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="category_follows"
+    )
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name="category_followers"
     )
