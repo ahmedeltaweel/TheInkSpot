@@ -45,13 +45,50 @@ class TestListCreationView(APITestCase):
         assert payload["title"][0] == "This field may not be blank."
         assert response.status_code == 400
 
-    def test_list_update(self):
+    def test_list_update_not_from_allowed_users(self):
         self.user = User.objects.create(
             username="testuser",
             email="testuser@gmail.com",
             password="ABc_123",
         )
-        data = {"title": "aa", "user": self.user.id}
+        data = {
+            "title": "blogs",
+            "description": "this is list of blogs",
+            "private": True,
+            "user": self.user.id,
+        }
 
-        response = client.post("/lists/", data, format="json")
-        assert response.status_code == 201
+        response = self.client.put("/lists/", data, format="json")
+        assert response.status_code == 405
+
+    def test_list_partial_update_from_not_allowed_users(self):
+        self.user = User.objects.create(
+            username="testuser",
+            email="testuser@gmail.com",
+            password="ABc_123",
+        )
+        data = {
+            "title": "blogs",
+            "description": "this is list of blogs",
+            "private": True,
+            "user": self.user.id,
+        }
+
+        response = self.client.patch("/lists/", data, format="json")
+        assert response.status_code == 405
+
+    def test_list_delete_from_not_allowed_users(self):
+        self.user = User.objects.create(
+            username="testuser",
+            email="testuser@gmail.com",
+            password="ABc_123",
+        )
+        data = {
+            "title": "blogs",
+            "description": "this is list of blogs",
+            "private": True,
+            "user": self.user.id,
+        }
+
+        response = self.client.delete("/lists/", data, format="json")
+        assert response.status_code == 405
