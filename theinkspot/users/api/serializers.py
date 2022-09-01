@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from theinkspot.users.models import UserFollow
+
 from .helpers import check_password_strength
 
 User = get_user_model()

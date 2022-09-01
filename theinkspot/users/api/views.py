@@ -25,17 +25,15 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
+from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ViewSet
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from django.shortcuts import get_object_or_404
 
-from .serializers import UserSerializer, FollowingsSerializer, FollowersSerializer
-from theinkspot.users.models import UserFollow, UserCategoryFollow
 from theinkspot.category.models import Category
-from theinkspot.users.api.serializers import UserSerializer
+from theinkspot.users.models import UserCategoryFollow, UserFollow
+
+from .serializers import FollowersSerializer, FollowingsSerializer, UserSerializer
 
 User = get_user_model()
 
@@ -115,8 +113,8 @@ class FollowView(APIView):
 
     def post(self, request):
         try:
-            username = request.data.get("username")
-        except:
+            username = request.data["username"]
+        except KeyError:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         user = get_object_or_404(klass=User, username=username)
         try:
@@ -143,14 +141,14 @@ class UnFollowView(APIView):
     def post(self, request):
         try:
             username = request.data.get("username")
-        except:
+        except KeyError:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         user = get_object_or_404(klass=User, username=username)
         try:
             UserFollow.objects.get(
                 follower_user=request.user, followed_user=user
             ).delete()
-        except:
+        except ObjectDoesNotExist:
             return Response(
                 status=status.HTTP_404_NOT_FOUND, data={"detail": "Not found"}
             )

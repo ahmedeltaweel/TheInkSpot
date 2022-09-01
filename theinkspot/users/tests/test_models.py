@@ -1,9 +1,7 @@
 import pytest
 from django.db import IntegrityError
 
-from theinkspot.users.models import User, UserFollow, UserCategoryFollow
-from django.db import IntegrityError
-from theinkspot.users.models import User, UserCategoryFollow
+from theinkspot.users.models import User, UserCategoryFollow, UserFollow
 
 pytestmark = pytest.mark.django_db
 

@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter, SimpleRouter
 from rest_framework_simplejwt import views as jwt_views
 
 from theinkspot.users.api.views import RegisterUsers, VerifyEmail
+
 from .views import FollowersView, FollowingsView, FollowView, UnFollowView
 
 if settings.DEBUG:
