@@ -1,5 +1,5 @@
-
 from rest_framework.permissions import SAFE_METHODS, BasePermission
+
 
 class ListPermission(BasePermission):
     def has_object_permission(self, request, view, obj):
