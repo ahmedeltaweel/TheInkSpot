@@ -76,7 +76,7 @@ class TestListCreationView(APITestCase):
         response = self.client.delete("/lists/" + str(list.id) + "/", args=[list.id])
         assert response.status_code == 401
 
-    def test_list_retrieve_for_anonymous_users(self):
+    def test_list_retrieve_for_any_user(self):
         list = self.make_list()
         response = self.client.get("/lists/" + str(list.id) + "/", args=[list.id])
         assert response.status_code == 200
