@@ -41,7 +41,6 @@ class RegisterUsers(generics.GenericAPIView):
     serializer_class = UserSerializer
 
     def post(self, request):
-
         user = request.data
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
