@@ -30,6 +30,8 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from theinkspot.category.models import Category
+from theinkspot.profiles.models import Profile
+from theinkspot.profiles.utils import set_default_avatar
 from theinkspot.users.api.serializers import UserSerializer
 from theinkspot.users.models import UserCategoryFollow
 
@@ -46,6 +48,12 @@ class RegisterUsers(generics.GenericAPIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        """ Create Profile For User"""
+        user = User.objects.get(username=request.data["username"])
+        default_avatar = set_default_avatar()
+        Profile.objects.create(
+            user=user, profile_pic=default_avatar, header_pic=default_avatar
+        )
         user_data = serializer.data
 
         # this part needs to move to another flow https://oyasr.atlassian.net/browse/INK-40
