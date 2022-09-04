@@ -80,14 +80,8 @@ jobs:
       - name: Build & Push
         uses: docker/build-push-action@v3
         with:
-          path: compose/production/aws
-          dockerfile: aws/Dockerfile
           path: compose/production/django
           dockerfile: django/Dockerfile
-          path: compose/production/postgres
-          dockerfile: postgres/Dockerfile
-          path: compose/production/traefik
-          dockerfile: traefik/Dockerfile
           push: true
           build-args: |
             version=${{ steps.tag.outputs.tag }}
