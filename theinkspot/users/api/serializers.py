@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
+from theinkspot.users.models import UserFollow
+
 from .helpers import check_password_strength
 
 User = get_user_model()
@@ -66,3 +68,25 @@ class UserSerializer(serializers.ModelSerializer):
             email=validation_data["email"],
             password=validation_data["password"],
         )
+
+
+class UserFollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["username"]
+
+
+class FollowersSerializer(serializers.ModelSerializer):
+    follower_user = UserSerializer()
+
+    class Meta:
+        model = UserFollow
+        fields = ("id", "follower_user", "created")
+
+
+class FollowingsSerializer(serializers.ModelSerializer):
+    followed_user = UserSerializer()
+
+    class Meta:
+        model = UserFollow
+        fields = ("id", "followed_user", "created")

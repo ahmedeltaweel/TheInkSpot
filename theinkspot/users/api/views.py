@@ -25,13 +25,15 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
+from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet, ViewSet
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from theinkspot.category.models import Category
-from theinkspot.users.api.serializers import UserSerializer
-from theinkspot.users.models import UserCategoryFollow
+from theinkspot.users.models import UserCategoryFollow, UserFollow
+
+from .serializers import FollowersSerializer, FollowingsSerializer, UserSerializer
 
 User = get_user_model()
 
@@ -85,6 +87,71 @@ class VerifyEmail(generics.GenericAPIView):
             return Response(
                 {"email": "Already Activated"}, status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class FollowersView(APIView):
+    def get(self, request, username):
+        user = get_object_or_404(klass=User, username=username)
+        serializer = FollowersSerializer(
+            user.followers.all(), many=True, context={"request": request}
+        )
+        return Response(status=status.HTTP_200_OK, data=serializer.data)
+
+
+class FollowingsView(APIView):
+    def get(self, request, username):
+        user = get_object_or_404(klass=User, username=username)
+        serializer = FollowingsSerializer(
+            user.following.all(), many=True, context={"request": request}
+        )
+        return Response(status=status.HTTP_200_OK, data=serializer.data)
+
+
+class FollowView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        try:
+            username = request.data["username"]
+        except KeyError:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        user = get_object_or_404(klass=User, username=username)
+        try:
+            user_follow = UserFollow.objects.create(
+                follower_user=request.user, followed_user=user
+            )
+            user_follow.save()
+        except ValueError:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"detail": "Can't Follow Yourself"},
+            )
+        except IntegrityError:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"detail": "Already Following User"},
+            )
+        return Response(status=status.HTTP_200_OK)
+
+
+class UnFollowView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        try:
+            username = request.data.get("username")
+        except KeyError:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        user = get_object_or_404(klass=User, username=username)
+        try:
+            UserFollow.objects.get(
+                follower_user=request.user, followed_user=user
+            ).delete()
+        except ObjectDoesNotExist:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND, data={"detail": "Not found"}
+            )
+        return Response(status=status.HTTP_200_OK)
 
 
 class CategoryFollow(GenericViewSet):

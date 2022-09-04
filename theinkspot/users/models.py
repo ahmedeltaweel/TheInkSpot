@@ -67,15 +67,46 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.username
 
 
+class UserFollowManager(models.Manager):
+    def get_queryset(self):
+        # prefetch the followed user and the follower user to avoid 1+N queries
+        return super().get_queryset().select_related("followed_user", "follower_user")
+
+
+class UserFollow(TimeStampedModel):
+    follower_user = models.ForeignKey(
+        "User", related_name="following", on_delete=models.CASCADE
+    )
+    followed_user = models.ForeignKey(
+        "User", related_name="followers", on_delete=models.CASCADE
+    )
+    objects = UserFollowManager()
+
+    class Meta:
+        unique_together = ("follower_user", "followed_user")
+
+    def save(self, *args, **kwargs):
+        # disallow following yourself
+        if self.followed_user == self.follower_user:
+            raise ValueError("You cannot follow yourself")
+        # call super to save the model instance
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.follower_user.username} follows {self.followed_user.username}"
+
+
 class FollowCategoryManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().select_related("user", "category")
 
 
 class UserCategoryFollow(TimeStampedModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="followers")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="category_follows"
+    )
     category = models.ForeignKey(
-        Category, on_delete=models.CASCADE, related_name="followed_categories"
+        Category, on_delete=models.CASCADE, related_name="category_followers"
     )
     get_email = models.BooleanField(
         _("get notified about this category"), default=False
