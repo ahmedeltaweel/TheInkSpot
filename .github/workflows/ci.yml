@@ -80,6 +80,7 @@ jobs:
       - name: Build & Push
         uses: docker/build-push-action@v2
         with:
+          run: echo ${{ steps.tag.outputs.tag }}
           path: compose/production/django
           dockerfile: django/Dockerfile
           push: true
