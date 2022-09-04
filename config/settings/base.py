@@ -76,13 +76,13 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
-    "drf_spectacular",
     "rest_framework_simplejwt",
 ]
 
 LOCAL_APPS = [
     "theinkspot.category",
     "theinkspot.users",
+    "theinkspot.lists",
     "theinkspot.posts",
     "theinkspot.profiles",
     # Your stuff: custom apps go here
