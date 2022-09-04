@@ -84,5 +84,5 @@ jobs:
           dockerfile: django/Dockerfile
           push: true
           build-args: |
-            version=${{ steps.tag.outputs.tag }}
+            version=${{ steps.tag.outputs.tags }}
           tags: ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tags }}
