@@ -12,7 +12,6 @@ on:
     paths-ignore: [ "docs/**" ]
 
   push:
-      branches: [ "master", "main" ]
       tags: ['v*.*.*']
       paths-ignore: [ "docs/**" ]
 
@@ -77,11 +76,7 @@ jobs:
           registry: ${{ secrets.ACR_ENDPOINT }}
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
-      - name: Build & Push
-        uses: docker/build-push-action@v3
-        with:
-          context: ./compose/production/
-          push: true
-          build-args: |
-            version=${{ steps.tag.outputs.tag }}
-          tags: ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
+
+      - run: |
+          docker build theinkspot/compose/production/dajngo -t ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
+          docker push ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
