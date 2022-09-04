@@ -13,9 +13,6 @@ on:
 
   push:
     branches: [ "master", "main" ]
-    paths-ignore: [ "docs/**" ]
-
-  push:
     tags: ['v*']
     paths-ignore: [ "docs/**" ]
 
@@ -83,15 +80,14 @@ jobs:
       - name: Build & Push
         uses: docker/build-push-action@v3
         with:
-          # context: ./compose/production/
           path: compose/production/aws
           dockerfile: aws/Dockerfile
           path: compose/production/django
-          dockerfile: django/Dockerfile  
+          dockerfile: django/Dockerfile
           path: compose/production/postgres
-          dockerfile: postgres/Dockerfile  
+          dockerfile: postgres/Dockerfile
           path: compose/production/traefik
-          dockerfile: traefik/Dockerfile                          
+          dockerfile: traefik/Dockerfile
           push: true
           build-args: |
             version=${{ steps.tag.outputs.tag }}
