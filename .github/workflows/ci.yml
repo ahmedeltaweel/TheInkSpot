@@ -77,6 +77,10 @@ jobs:
           registry: ${{ secrets.ACR_ENDPOINT }}
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
+          image_tags: |-
+            $(Build.SourceBranchName)
+            $(Build.BuildId)
+            $(Build.SourceVersion)
       - run: |
           docker build ./compose/production/django -t ${{ secrets.ACR_ENDPOINT }}/${{ github.IMAGE_NAME }}:$${{ steps.tag.outputs.tag }}
           docker push ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
