@@ -4,6 +4,7 @@ name: CI
 env:
   DOCKER_BUILDKIT: 1
   COMPOSE_DOCKER_CLI_BUILD: 1
+  IMAGE_NAME: theinkspot
 
 on:
   pull_request:
@@ -12,6 +13,7 @@ on:
 
   push:
     branches: [ "master", "main" ]
+    tags: ["v*"]
     paths-ignore: [ "docs/**" ]
 
 concurrency:
@@ -58,3 +60,35 @@ jobs:
 
       - name: Tear down the Stack
         run:  docker-compose -f local.yml down
+
+  build-and-deploy:
+    name: build container image
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v3
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1
+      - name: 'Build and push image'
+        uses: azure/docker-login@v1
+        with:
+          registry: ${{ secrets.ACR_ENDPOINT }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+          image_tags: |-
+            $(Build.SourceBranchName)
+            $(Build.BuildId)
+            $(Build.SourceVersion)
+      - run: |
+          docker build ./compose/production/django -t ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
+          docker push ${{ secrets.ACR_ENDPOINT }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
+
+      # - name: 'Deploy to Azure Container Instances'
+      #   uses: 'azure/aci-deploy@v1'
+      #   with:
+      #     image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/sampleapp:${{ github.sha }}
+      #     registry-login-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
+      #     registry-username: ${{ secrets.REGISTRY_USERNAME }}
+      #     registry-password: ${{ secrets.REGISTRY_PASSWORD }}
