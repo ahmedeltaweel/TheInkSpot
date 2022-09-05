@@ -4,7 +4,7 @@ name: CI
 env:
   DOCKER_BUILDKIT: 1
   COMPOSE_DOCKER_CLI_BUILD: 1
-  IMAGE_NAME: TheInkSpot
+  IMAGE_NAME: theinkspot
 
 on:
   pull_request:
