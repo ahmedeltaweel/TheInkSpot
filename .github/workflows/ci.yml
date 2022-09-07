@@ -78,5 +78,5 @@ jobs:
           password: ${{ secrets.ACR_PASSWORD }}
 
       - run: |
-          docker build theinkspot/compose/production/dajngo -t theinkspot.azurecr.io/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
+          docker build theinkspot/compose/production/django -t theinkspot.azurecr.io/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
           docker push theinkspot.azurecr.io/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
