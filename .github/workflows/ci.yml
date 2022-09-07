@@ -76,7 +76,11 @@ jobs:
           registry: ${{ secrets.ACR_ENDPOINT }}
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
-
-      - run: |
-          docker build -f compose/production/django/Dockerfile -t theinkspot.azurecr.io/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
-          docker push theinkspot.azurecr.io/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
+      - name: Build & Push
+        uses: docker/build-push-action@v3
+        with:
+          context: compose/production/django/
+          push: true
+          build-args: |
+            version=${{ steps.tag.outputs.tag }}
+          tags: theinkspot.azurecr.io/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
