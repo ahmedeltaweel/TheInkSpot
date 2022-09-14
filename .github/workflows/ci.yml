@@ -79,7 +79,7 @@ jobs:
       - name: Build & Push
         uses: docker/build-push-action@v3
         with:
-          path: compose/production/postgres
+          path: compose/production/postgres/
           dockerfile: django/Dockerfile
           push: true
           build-args: |
