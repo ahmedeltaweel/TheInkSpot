@@ -80,7 +80,7 @@ jobs:
       - name: Build & Push
         uses: docker/build-push-action@v2
         with:
-          path: compose/production/django
+          path: compose/production/postgres
           dockerfile: django/Dockerfile
           push: true
           build-args: |
