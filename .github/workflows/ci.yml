@@ -80,7 +80,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           path: compose/production/django/
-          dockerfile: django/Dockerfile
+          dockerfile: Dockerfile
           push: true
           build-args: |
             version=${{ steps.tag.outputs.tag }}
