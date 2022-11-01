@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    
+
 
       - name: Checkout Code Repository
         uses: actions/checkout@v3
@@ -71,18 +71,12 @@ jobs:
       - name: Get tag
         id: tag
         uses: dawidd6/action-get-tag@v1
-      - name: Log into registry
-        uses: docker/login-action@v2
+      - name: Build and push image
+        uses: azure/docker-login@v1
         with:
-          registry: ${{ secrets.ACR_ENDPOINT }}
+          login-server: ${{ secrets.ACR_ENDPOINT }}
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
-      - name: Build & Push
-        uses: docker/build-push-action@v3
-        with:
-          context: compose/production/django/
-          dockerfile: Dockerfile
-          push: true
-          build-args: |
-            version=${{ steps.tag.outputs.tag }}
-          tags: theinkspot.azurecr.io/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
+      - run: |
+            docker build compose/production/django/ -t ${{ secrets.ACR_ENDPOINT }}/django:${{ steps.tag.outputs.tag }}
+            docker push ${{ secrets.ACR_ENDPOINT }}/django:${{ steps.tag.outputs.tag }}
